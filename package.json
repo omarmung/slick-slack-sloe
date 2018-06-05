@@ -2,6 +2,9 @@
   "name": "slick-slack-sloe",
   "version": "0.1.0",
   "description": "server that supports a slack bot that plays tic-tac-toe",
+  "engines": {
+    "node": "8.11.2"
+  },
   "main": "app.js",
   "scripts": {
     "test": "mocha test",
