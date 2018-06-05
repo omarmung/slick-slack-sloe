@@ -1,0 +1,31 @@
+{
+  "name": "slick-slack-sloe",
+  "version": "0.1.0",
+  "description": "server that supports a slack bot that plays tic-tac-toe",
+  "main": "app.js",
+  "scripts": {
+    "test": "mocha test",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/omarmung/slick-slack-sloe.git"
+  },
+  "author": "Dustin Kimmel",
+  "license": "SEE LICENSE IN LICENSE",
+  "bugs": {
+    "url": "https://github.com/omarmung/slick-slack-sloe/issues"
+  },
+  "homepage": "https://github.com/omarmung/slick-slack-sloe#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "dotenv": "^6.0.0",
+    "express": "^4.16.3"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1",
+    "mocha": "^5.2.0",
+    "nodemon": "^1.17.5"
+  }
+}
