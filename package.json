@@ -8,19 +8,28 @@
   "main": "app.js",
   "scripts": {
     "test": "mocha test",
-    "start": "node app.js"
+    "start": "node app.js",
+    "documentation": "apidoc -i api/"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/omarmung/slick-slack-sloe.git"
   },
-  "author": "Dustin Kimmel",
+  "author": "dkimmel@gmail.com",
   "license": "SEE LICENSE IN LICENSE",
   "bugs": {
     "url": "https://github.com/omarmung/slick-slack-sloe/issues"
   },
   "homepage": "https://github.com/omarmung/slick-slack-sloe#readme",
+  "apidoc": {
+    "name": "Slick-Slack-Sloe API",
+    "version": "0.1.0",
+    "description": "API Documentation for Slack /command Tic-Tac-Toe App",
+    "title": "SSS API",
+    "url" : "https://slick-slack-sloe-app.herokuapp.com/api/v1"
+  },
   "dependencies": {
+    "apidoc": "^0.17.6",
     "body-parser": "^1.18.3",
     "dotenv": "^6.0.0",
     "express": "^4.16.3"
