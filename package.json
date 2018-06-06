@@ -33,6 +33,7 @@
   },
   "jshintConfig": {
     "asi": true,
+    "node": true,
     "esversion": 6
   },
   "dependencies": {
