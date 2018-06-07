@@ -2,6 +2,7 @@ const Square = require('./square')
 class Board {
   constructor() {
     this.squares = []
+    this.populateWithSquares()
   }
   populateWithSquares() {
     for(var i = 0; i < 9; i++) {
