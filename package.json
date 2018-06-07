@@ -10,9 +10,10 @@
     "dev": "nodemon app.js",
     "documentation": "apidoc -i api/",
     "lint": "jshint **.js",
-    "prestart": "npm run documentation && npm run lint",
+    "prestart": "npm run documentation && npm run lint && npm run test",
     "start": "node app.js",
-    "test": "mocha test"
+    "test": "mocha test",
+    "dev": "npm run test && nodemon app.js"
   },
   "repository": {
     "type": "git",
