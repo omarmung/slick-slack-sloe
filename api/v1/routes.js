@@ -20,9 +20,13 @@ router.get('/', (req, res) => { res.json({"status": "ok"}) })
 
 /**
  * @api {post} /api/v1/game Game Command Parser
- * @apiName Game
+ * @apiName Gam
  * @apiGroup Game
  *
  **/
-router.post('/game', channelGamesController.gameCommandHandler(req, res))
+router.post('/game', function(req, res){
+  // handle req
+  channelGamesController.gameCommandHandler(req, res)
+  return
+})
 module.exports = router
