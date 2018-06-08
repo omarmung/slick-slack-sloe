@@ -1,5 +1,7 @@
 const express = require('express')
 const router = express.Router()
+const dotenv = require('dotenv').config()
+const channelGamesController = require('../../controllers/channelGamesController')
 
 /**
  * @api {get} /api/v1 App Heartbeat
@@ -16,7 +18,11 @@ const router = express.Router()
  **/
 router.get('/', (req, res) => { res.json({"status": "ok"}) })
 
-
-router.post('/', function(req, res) { res.send('POST handler for /api/v1 route.') })
-
-module.exports = router;
+/**
+ * @api {post} /api/v1/game Game Command Parser
+ * @apiName Game
+ * @apiGroup Game
+ *
+ **/
+router.post('/game', channelGamesController.gameCommandHandler(req, res))
+module.exports = router
