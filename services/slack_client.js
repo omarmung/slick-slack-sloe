@@ -5,20 +5,23 @@ if (!token) { console.log('You must specify a token'); process.exitCode = 1; ret
 const web = new WebClient(token);
 
 // get the channels in the workspace
-export function getChannelsAsync() {
+function getSlackWorkspaceChannelAsync(slackChannelId) {
   // call Slack Web API
-  return web.channels.list()
+  return web.channels.info({'channel': slackChannelId})
   .then((response) => {
-    // Success!
-    console.log('Team info response:');
-    // console.log(response);
-    return response
+    if (response.ok) {
+      return response
+    }
+    throw new Error('channels.info call failed')
   })
   .catch((error) => {
     // Error
-    console.log('Team info error:');
     console.log(error);
-    throw new Error(error)
+    return new Error(error)
   });
+}
+
+module.exports = {
+  getSlackWorkspaceChannelAsync: getSlackWorkspaceChannelAsync
 }
 
