@@ -1,4 +1,3 @@
-const workspaceModel = require('../models/workspaceModel')
 const slackClient = require('../services/slack_client')
 const parseCommand = require('../services/command_parser.js')
 
