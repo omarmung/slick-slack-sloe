@@ -78,7 +78,7 @@ function statusCommandHandler(req, res) {
 
 function fetchSlackChannelAsync(slackChannelId) {
   // call Slack Web API and get channels for the workspace
-  let channelPromise = slackClient.getSlackWorkspaceChannelsAsync(slackChannelId)
+  let channelPromise = slackClient.getSlackWorkspaceChannelAsync(slackChannelId)
     .then((channelResponse) => {
       // if (!channelResponse.ok)
 

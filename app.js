@@ -27,6 +27,7 @@ const requireIntegrationToken = (req, res, next) => {
 // build express app
 app()
   .use(bodyParser.json()) // attach app-wide middleware
+  .use(bodyParser.urlencoded({extended: true}))
   .use('/docs', app.static('./doc')) // attach static route for documentation
   // .all('/api/v1/*', requireIntegrationToken)
   .use('/api/v1', v1) // attach router

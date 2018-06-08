@@ -26,6 +26,7 @@ router.get('/', (req, res) => { res.json({"status": "ok"}) })
  **/
 router.post('/game', function(req, res){
   // handle req
+  console.log('/game req.body:', req.body)
   channelGamesController.gameCommandHandler(req, res)
   return
 })
