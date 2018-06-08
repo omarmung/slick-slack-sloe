@@ -7,13 +7,12 @@
   },
   "main": "app.js",
   "scripts": {
-    "dev": "nodemon app.js",
+    "dev": "npm run test && nodemon app.js",
     "documentation": "apidoc -i api/",
     "lint": "jshint **.js",
     "prestart": "npm run documentation && npm run lint && npm run test",
     "start": "node app.js",
-    "test": "mocha test",
-    "dev": "npm run test && nodemon app.js"
+    "test": "mocha test"
   },
   "repository": {
     "type": "git",
@@ -38,11 +37,14 @@
     "esversion": 6
   },
   "dependencies": {
+    "@slack/client": "^4.3.1",
     "apidoc": "^0.17.6",
     "body-parser": "^1.18.3",
     "dotenv": "^6.0.0",
     "express": "^4.16.3",
-    "jshint": "^2.9.5"
+    "jshint": "^2.9.5",
+    "request": "^2.87.0",
+    "request-promise-native": "^1.0.5"
   },
   "devDependencies": {
     "chai": "^4.1.2",
