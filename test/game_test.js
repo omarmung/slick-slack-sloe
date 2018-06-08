@@ -6,7 +6,7 @@ const expect = chai.expect
 const assert = chai.assert
 
 // import libs
-var Game = require('../controllers/game')
+var Game = require('../libs/game')
 
 describe('Classes', function() {
   var aGame;

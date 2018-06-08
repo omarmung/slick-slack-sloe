@@ -16,7 +16,7 @@ function getSlackWorkspaceChannelAsync(slackChannelId) {
   })
   .catch((error) => {
     // Error
-    console.log(error);
+    console.log(error)
     return new Error(error)
   });
 }
