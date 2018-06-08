@@ -9,4 +9,4 @@ class Channel {
   }
 }
 
-module.exports = Channel()
+module.exports = Channel
