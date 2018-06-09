@@ -29,16 +29,6 @@ function processBodyText(req, res, next) {
   next()
 }
 
-// identify help command
-function help(req, res, next) {
-  if(req.command.commandArr[0] === 'help') {
-    console.log('middleware help')
-    res.send(req.app.locals.constants.helpCommandText)
-    return
-  }
-  next()
-}
-
 // identify status command
 function status(req, res, next) {
   if(req.command.commandArr[0] === 'status') {
@@ -78,6 +68,16 @@ function move(req, res, next) {
     console.log('middleware move')
     res.send('middleware move')
     // next()
+    return
+  }
+  next()
+}
+
+// identify help command
+function help(req, res, next) {
+  if(req.command.commandArr[0] === 'help') {
+    console.log('middleware help')
+    res.send(req.app.locals.constants.helpCommandText)
     return
   }
   next()
