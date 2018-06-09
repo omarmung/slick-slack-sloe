@@ -1,3 +1,4 @@
+const channelGamesController = require('../controllers/channelGamesController')
 /** 
 *   We'll do necessary checks here,
 *   and load up a 'req.command' obj
@@ -11,33 +12,34 @@
 *     },
 *   } 
 */
-
 function processBodyText(req, res, next) {
+  // create results obj
+  req.command = {}
+
+  // process command text
   if(req.body && req.body.text) {
     console.log('middleware processBodyText')
-    req.command.arr = req.body.text.split(' ') || "nada?"
+    req.command.commandArr = req.body.text.split(' ') || ['help']
     console.log('REQ.COMMAND:', req.command)
     next()
     return
   }
-  // missing body / body.text
-  res.send('Quoi?')
-  // next()
-  // if just '/ttt' w/o param doesn't send a body
-  // might want to include a handler for just /ttt
-  // to remap to help, or status
+  // missing body.text, remap request to 'help'
+  req.command.commandArr[0] = 'help'
+  next()
 }
 
+// identify help command
 function help(req, res, next) {
   if(req.command.commandArr[0] === 'help') {
     console.log('middleware help')
-    res.send('middleware help')
-    // next()
+    res.send(req.app.locals.constants.helpCommandText)
     return
   }
   next()
 }
 
+// identify status command
 function status(req, res, next) {
   if(req.command.commandArr[0] === 'status') {
     console.log('middleware status')
@@ -48,6 +50,7 @@ function status(req, res, next) {
   next()
 }
 
+// identify and parse play command
 function play(req, res, next) {
   if(req.command.commandArr[0] === 'play') {
     console.log('middleware play')
@@ -58,6 +61,7 @@ function play(req, res, next) {
   next()
 }
 
+// identify leave command
 function leave(req, res, next) {
   if(req.command.commandArr[0] === 'leave') {
     console.log('middleware leave')
@@ -68,6 +72,7 @@ function leave(req, res, next) {
   next()
 }
 
+// identify and parse move command
 function move(req, res, next) {
   if(req.command.commandArr[0] === 'move') {
     console.log('middleware move')

@@ -8,6 +8,7 @@ const dotenv = require('dotenv').config()
 
 // get config and env variables
 const port = process.env.PORT || process.env.APP_PORT_NUMBER
+const constants = require('./libs/constants')
 
 // get app-wide middleware and long-running modules
 const bodyParser = require('body-parser')
@@ -25,6 +26,6 @@ app.all('/api/v1/*', requireOutgoingVerificationToken) // check each request for
 app.use('/api/v1', v1) // attach router for v1 routes
 app.listen(port, () => { console.log('Server listening on port ' + port + '...') } ) // start server
 app.locals.workspace = new Workspace()  // start internals
-
+app.locals.constants = constants
   
   
