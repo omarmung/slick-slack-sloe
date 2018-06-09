@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const dotenv = require('dotenv').config()
 const channelGamesController = require('../../controllers/channelGamesController')
-
+const commandParserMiddleware = require('../../middleware/command_parser_middleware')
 /**
  * @api {get} /api/v1 App Heartbeat
  * @apiName Heartbeat
@@ -24,10 +24,21 @@ router.get('/', (req, res) => { res.json({"status": "ok"}) })
  * @apiGroup Game
  *
  **/
-router.post('/game', function(req, res){
-  // handle req
-  console.log('/game req.body:', req.body)
-  channelGamesController.gameCommandHandler(req, res)
-  return
-})
+router.post(
+  '/game',
+  [
+    commandParserMiddleware.processBodyText,
+    commandParserMiddleware.help,
+    commandParserMiddleware.status, 
+    commandParserMiddleware.play,
+    commandParserMiddleware.move, 
+    commandParserMiddleware.leave
+  ],
+  function(req, res) {
+    // handle req
+    console.log('/game req.body:', req.body)
+    channelGamesController.gameCommandHandler(req, res)
+    return
+  }
+)
 module.exports = router
