@@ -69,11 +69,16 @@ function playCommandHandler(req, res) {
 function statusCommandHandler(req, res) {
   // get lookup info from req
   const slackChannelId = req.body.channel_id
-  
-  // fetch channel info 
-  fetchSlackChannelAsync(slackChannelId)
-    .then()
-    .catch()
+  let workspace = req.app.locals.workspace
+  let message;
+  // check activeChannels to see if we're tracking a game in this channel already
+  if(workspace.activeChannelExists(slackChannelId)) {
+    message = "there's a game being played already"
+  } else {
+    message = "no game is being played right now"
+  }
+  res.send(message)
+  return
 }
 
 function fetchSlackChannelAsync(slackChannelId) {
