@@ -1,6 +1,8 @@
 const express = require('express')
 const router = express.Router()
 const dotenv = require('dotenv').config()
+const routeValidator = require('express-route-validator')
+const slashCommandValidationOptions = require('../../libs/route_validation_options')
 const channelGamesController = require('../../controllers/channelGamesController')
 const commandParserMiddleware = require('../../middleware/command_parser_middleware')
 /**
@@ -27,6 +29,7 @@ router.get('/', (req, res) => { res.json({"status": "ok"}) })
 router.post(
   '/game',
   [
+    routeValidator.validate(slashCommandValidationOptions.gameRoute),
     commandParserMiddleware.processBodyText,
     commandParserMiddleware.help,
     commandParserMiddleware.status, 

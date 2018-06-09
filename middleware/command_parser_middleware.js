@@ -13,25 +13,35 @@ const channelGamesController = require('../controllers/channelGamesController')
 *   } 
 */
 function processBodyText(req, res, next) {
+  console.log('middleware processBodyText')
+  
   // create results obj
-  req.command = {}
+  req.command = {
+    channelId: req.body.channel_id,
+    userId: req.body.user_id,
+    responseUrl: req.body.response_url,
+    token: req.body.token
+  }
 
   // process command text
-  if(req.body && req.body.text) {
-    console.log('middleware processBodyText')
+  if(req.body.text) {
     req.command.commandArr = req.body.text.split(' ') || ['help']
+
     console.log('REQ.COMMAND:', req.command)
+    
     next()
     return
   }
   // missing body.text, remap request to 'help'
-  req.command.commandArr[0] = 'help'
+  req.command.commandArr = ['help']
   next()
 }
 
 // identify status command
 function status(req, res, next) {
   if(req.command.commandArr[0] === 'status') {
+    let channelId = req.command.channelId
+    
     console.log('middleware status')
     res.send('middleware status')
     // next()
@@ -85,9 +95,9 @@ function help(req, res, next) {
 
 module.exports = {
   processBodyText: processBodyText,
-  help: help,
   status: status,
   play: play,
   leave: leave,
   move: move,
+  help: help
 }
