@@ -9,15 +9,14 @@ const dotenv = require('dotenv').config()
 
 // get config and env variables
 const port = process.env.PORT || process.env.APP_PORT_NUMBER
-const slack_integration_token = process.env.SLACK_INTEGRATION_TOKEN
-
+const slackSlashCommandOutgoingVerificationToken = process.env.SLACK_SLASH_COMMAND_OUTGOING_VERIFICATION_TOKEN
+// const slackAppOutgoingVerificationToken = process.env.SLACK_APP_OUTGOING_VERIFICATION_TOKEN
 
 const Workspace = require('./libs/workspace')
 
 // middleware check 
 const requireIntegrationToken = (req, res, next) => {
-  console.log('test string heroku env variable:', process.env.TEST_STRING)
-  if(req.body.token && req.body.token === slack_integration_token) {
+  if(req.body.token && req.body.token === slackSlashCommandOutgoingVerificationToken) {
     next()
     return
   }
