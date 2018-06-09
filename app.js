@@ -16,6 +16,7 @@ const Workspace = require('./libs/workspace')
 
 // middleware check 
 const requireIntegrationToken = (req, res, next) => {
+  console.log('test string heroku env variable:', process.env.TEST_STRING)
   if(req.body.token && req.body.token === slack_integration_token) {
     next()
     return
