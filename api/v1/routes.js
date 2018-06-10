@@ -31,6 +31,7 @@ router.post(
   [
     routeValidator.validate(slashCommandValidationOptions.gameRoute),
     commandParserMiddleware.processBodyText,
+    commandParserMiddleware.isActiveChannel,
     commandParserMiddleware.help,
     commandParserMiddleware.status, 
     commandParserMiddleware.play,
@@ -40,7 +41,8 @@ router.post(
   function(req, res) {
     // handle req
     console.log('/game req.body:', req.body)
-    channelGamesController.gameCommandHandler(req, res)
+    // channelGamesController.genericCommandHandler(req, res)
+    res.send('no takers')
     return
   }
 )

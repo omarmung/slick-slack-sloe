@@ -7,7 +7,11 @@ const channelGamesController = require('../controllers/channelGamesController')
 *   req {
 *     body.text?: "<arg1> <arg2> ...",
 *     command { <-- we create this here
-*       commandArr: body.text.split(' ')
+*       commandArr: [body.text.split(' ')],
+*       channelId: <slack channel_id>,
+*       userId: <slack user_id>,
+*       responseUrl: <slack response URL>,
+*       token: <slack slash command outgoing verification token>,
 *       channelReference: false <-- attach activeChannel
 *     },
 *   } 
@@ -20,14 +24,15 @@ function processBodyText(req, res, next) {
     channelId: req.body.channel_id,
     userId: req.body.user_id,
     responseUrl: req.body.response_url,
-    token: req.body.token
+    token: req.body.token,
+    channelReference: false
   }
 
   // process command text
-  if(req.body.text) {
-    req.command.commandArr = req.body.text.split(' ') || ['help']
+  if(req.body.hasOwnProperty('text')) {
+    req.command.commandArr = req.body.text.split(' ')
 
-    console.log('REQ.COMMAND:', req.command)
+    console.log('tfw req.command does indeed have text:', req.command)
     
     next()
     return
@@ -37,25 +42,56 @@ function processBodyText(req, res, next) {
   next()
 }
 
+// attach channel if in activeChannels
+function isActiveChannel(req, res, next) {
+  let channelId = req.command.channelId
+
+  // check if channelId is in workspace's activeChannels
+  if(req.app.locals.workspace.activeChannelExists(channelId)) {
+    // it's there, game on!
+    console.log('middleware isActiveChannel: true')
+    
+    // get the channel ref from storage and add to this request
+    let activeChannelReference = req.app.locals.workspace.getActiveChannelGameById(channelId)
+    req.command.channelReference = activeChannelReference
+    console.log('middleware isActiveChannel: retrieved channel to request')
+   
+    // we're done here
+    next()
+    return
+  }
+  // it's not there, no activeChannel, :. no game
+  console.log('middleware isActiveChannel: false')
+  next()
+}
+
 // identify status command
 function status(req, res, next) {
+  console.log('middleware status')
+ 
   if(req.command.commandArr[0] === 'status') {
-    let channelId = req.command.channelId
     
-    console.log('middleware status')
+    // render status response
     res.send('middleware status')
-    // next()
     return
   }
   next()
 }
 
-// identify and parse play command
+// identify and parse play commands
 function play(req, res, next) {
-  if(req.command.commandArr[0] === 'play') {
+  let commandArr = req.command.commandArr
+  if(commandArr[0] === 'play') {
     console.log('middleware play')
-    res.send('middleware play')
-    // next()
+
+    // did user indicate a potential opponent?
+    if(commandArr.length > 1) {
+      // yes, engage play-wanting protocol
+      channelGamesController.playCommandHandler(req, res)
+      return
+    }
+    // no, handle it
+    res.send('Okay, and who will you ask to play?')
     return
   }
   next()
@@ -65,8 +101,9 @@ function play(req, res, next) {
 function leave(req, res, next) {
   if(req.command.commandArr[0] === 'leave') {
     console.log('middleware leave')
-    res.send('middleware leave')
-    // next()
+
+    // engage leave-wanting protocol
+    // channelGamesController(req, res, next)
     return
   }
   next()
@@ -95,6 +132,7 @@ function help(req, res, next) {
 
 module.exports = {
   processBodyText: processBodyText,
+  isActiveChannel: isActiveChannel,
   status: status,
   play: play,
   leave: leave,
