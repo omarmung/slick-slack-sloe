@@ -1,7 +1,8 @@
 class Player {
-  constructor(symbol, handle) {
+  constructor(symbol, userId, handle) {
     this.handle = handle
     this.symbol = symbol
+    this.userId = userId || null
     this.occupiedSquaresByValue = []
   }
   checkIfUserExistsInChannel(channel) {

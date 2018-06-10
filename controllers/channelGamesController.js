@@ -14,6 +14,7 @@ function playCommandHandler(req, res) {
   // gather necessary info
   const slackChannelId = req.command.channelId
   const slackChannelName = req.command.channel_name || 'unknown'
+  const player1UserId = req.command.userId
   const player1Symbol = 'X'
   const player2Symbol = 'O'
   let workspace = req.app.locals.workspace
@@ -22,7 +23,7 @@ function playCommandHandler(req, res) {
   if(!isGameAlreadyBeingPlayedInChannel(slackChannelId, workspace)) {
     // no game currently being played
     // start game
-    let newChannelReference = workspace.createNewChannel(slackChannelId, slackChannelName, player1Symbol, player2Symbol)
+    let newChannelReference = workspace.createNewChannel(slackChannelId, slackChannelName, player1UserId, player1Symbol, player2Symbol)
     
     let isItThere = workspace.getActiveChannelGameById(slackChannelId)
     console.log('game:', isItThere)
@@ -31,7 +32,7 @@ function playCommandHandler(req, res) {
   }
 
   // there's already a game in progress in that channel
-  res.send('there\'s already a game in progress!')
+  res.send('There\'s already a game in progress!')
   return
 }
 

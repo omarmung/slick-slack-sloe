@@ -9,13 +9,14 @@ const assert = chai.assert
 var Game = require('../libs/game')
 
 describe('Classes', function() {
-  var aGame;
-  var symbol1 = "X"
-  var symbol2 = "O"
+  let aGame;
+  const player1UserId = "A12345" 
+  const symbol1 = "X"
+  const symbol2 = "O"
 
   beforeEach('some description', function() {
     // beforeEach hook
-    aGame = new Game(symbol1, symbol2)
+    aGame = new Game(player1UserId, symbol1, symbol2)
 
   })
 
