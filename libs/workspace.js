@@ -11,10 +11,18 @@ class Workspace {
     return delete this.activeChannels[slackChannelId]
   }
   getActiveChannelGameById(slackChannelId) {
-    if(channelExists(slackChannelId)) {
+    if(this.activeChannelExists(slackChannelId)) {
       return this.activeChannels[slackChannelId]
     }
     throw new Error('channel not found')
+  }
+  createNewChannel(slackChannelId, channelName, player1Symbol, player2Symbol) {
+    // instantiate new channel
+    let channel = new Channel(slackChannelId, channelName, player1Symbol, player2Symbol)
+    // add to activeChannels storage
+    this.activeChannels[slackChannelId] = channel
+    // return reference to new channel
+    return channel
   }
 
 }
