@@ -5,6 +5,7 @@ module.exports = {
       retired: "{{player2}} has retired from /ttt and declines your challenge",
       promptPlayer2: "{{player1}} has challenged you to a game of tic-tac-toe. Want to play?",
       declined: "{{player2}} has declined your challenge.",
+      inProgress: "There's already a game going."
     },
     status: {
       channelHasGame: "Here's the board:",
@@ -32,7 +33,6 @@ module.exports = {
       unretired: "Welcome back. Future challenges will no longer be automatically declined."
     }
   },
-  boardTemplate: "```| {{1.mark}} | {{2.mark}} | {{3.mark}} |\n|---+---+---|\n| {{4.mark}} | {{5.mark}} | {{6.mark}} |\n|---+---+---|\n| {{7.mark}} | {{8.mark}} | {{9.mark}} |```",
   slackMessageJsonTemplates: {
     withBoard: {
       "channel": "{{slackChannelId}}",
