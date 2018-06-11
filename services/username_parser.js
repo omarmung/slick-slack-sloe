@@ -1,3 +1,5 @@
+const miscHelpers = require('../utils/misc_helpers')
+
 // parse username string to username obj
 module.exports = function(usernameString) {
   // identify <@U1234|user> format
@@ -14,6 +16,6 @@ module.exports = function(usernameString) {
   // send back a parsed obj
   return {
     parsedUserId: matched[1],
-    parsedUserName: matched[2]
+    parsedUserName: miscHelpers.capitalizeFirstLetter(matched[2])
   }
 }

@@ -1,5 +1,5 @@
 const channelGamesController = require('../controllers/channelGamesController')
-
+const parseExpandedUsername = require('../services/username_parser')
 /** 
 *   We'll do necessary checks here,
 *   and load up a 'req.command' obj
@@ -26,7 +26,9 @@ function processBodyText(req, res, next) {
     userId: req.body.user_id,
     responseUrl: req.body.response_url,
     token: req.body.token,
-    channelReference: false
+    channelReference: false,
+    opponentUserId: false,
+    opponentUserName: false
   }
 
   // process command text
@@ -70,15 +72,27 @@ function isActiveChannel(req, res, next) {
 function play(req, res, next) {
   let commandArr = req.command.commandArr
   if(commandArr[0] === 'play') {
-    console.log('middleware play')
+    console.log('middleware play') // TODO: remove
 
     // did user indicate a potential opponent?
     if(commandArr.length > 1) {
-      // yes, engage play-wanting protocol
-      channelGamesController.playCommandHandler(req, res)
-      return
+      // yes they did
+      
+      // but was it an @username?
+      // like in the <@U1234|user> format?
+      let attemptedParse = parseExpandedUsername(commandArr[1])
+      if (!!attemptedParse) {
+        // looks like the right format, add parsed info to req
+        req.command.opponentUserId = attemptedParse.parsedUserId
+        req.command.opponentUserName = attemptedParse.parsedUserName
+        console.log('middleware play someone') // TODO: remove
+        channelGamesController.playCommandHandler(req, res)
+        return
+      }
+      // they did indicate someone, but not as an @name, so fallthrough
     }
     // no, handle it
+    console.log('middleware play who tho')  // TODO: remove
     channelGamesController.playWhoCommandHandler(req, res)
     return
   }
