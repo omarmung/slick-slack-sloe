@@ -9,28 +9,44 @@ function playCommandHandler(req, res) {
   const slackChannelId = req.command.channelId
   const slackChannelName = req.command.channel_name || 'unknown'
   const player1UserId = req.command.userId
-  const opponentText = req.command.commandArr[1]
+  const opponentUserName = req.command.opponentUserName
+  const opponentUserId = req.command.opponentUserId
+  console.log('req.command at playCommandHandler: ', req.command)
   workspace = req.app.locals.workspace
   const player1Symbol = 'X'
   const player2Symbol = 'O'
   
   // is there already a game in progress in that channel?
   if(!isGameAlreadyBeingPlayedInChannel(slackChannelId, workspace)) {
-    // no, so we need to start a game
-    let newChannelReference = workspace.createNewChannel(slackChannelId, slackChannelName, player1UserId, player1Symbol, player2Symbol)
-    
-    // is the potential opponent in this channel?
-    slackClient.getSlackWorkspaceChannelAsync(slackChannelId)
+    // no, so we need to check if they're in the channel and start a game
+    // checking if they're in the channel will be async
+
+    // first, is the potential opponent in this channel?
+    return slackClient.getSlackWorkspaceChannelAsync(slackChannelId)
       .then( response => {
-        res.json({"newChannelReference": newChannelReference})
+
+        // try to match the input userId to the channel membership
+        let isMember = response.members.includes(opponentUserId)
+        if (isMember) {
+          // ok, they're a channel member
+
+          // second step, let's create a channel (and it will create a game) 
+          let newChannelReference = workspace.createNewChannel(slackChannelId, slackChannelName, player1UserId, player1Symbol, player2Symbol)
+          res.json(`Okay, let's start a game and see if ${opponentUserName} wants to play!`)
+          slackClient.postTextToChannelEphemerallyAsync(slackChannelId, {"text": `Hey ${opponentUserName}, wanna play some tic-tac-toe?`}, opponentUserId)
+          return 
+        }
+        // oh no! that person isn't in this channel, sorry
+        res.json('Pick someone here in the channel!')
         return
       })
       .catch( error => {
-        throw new Error(error)
+        console.log('Error:', error)
+        // return res.json('testings')
       })
   }
 
-  // there's already a game in progress in that channel
+  // look like there's already a game in progress in that channel
   res.json(slackTemplates.stringTemplates.challenge.inProgress)
   return
 }
