@@ -17,8 +17,7 @@ const Workspace = require('./libs/workspace')
 
 // instantiate express app
 var app = express()
-
-// attach app-wide middleware
+// ...and attach app-wide middleware
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))
 app.use('/docs', express.static('./doc')) // attach static route for documentation
