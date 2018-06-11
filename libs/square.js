@@ -1,20 +1,27 @@
 class Square {
   constructor(value) {
-    this.value = value
+    this.value = value.toString()
     this.marked = false
   }
   get mark(){
-    return this.marked
+    if (this.marked) {
+      return this.value
+    }
+    return ' '
   }
-  set mark(state){
+  set mark(value){
     if (!this.marked) {
-      this.marked = state
+      this.value = value
+      this.marked = true
       return true
     }
     return false
   }
   get val(){
     return this.value
+  }
+  get markedBool(){
+    return this.marked
   }
 }
 

@@ -64,7 +64,7 @@ describe('Classes', function() {
     it('should have value and marked keys', function() {
       aGame.gameBoard.squares.forEach( square => { 
         assert.hasAllKeys(square, ['value', 'marked'])
-        assert(square.mark === false) 
+        assert(square.markedBool === false) 
       })
     })
   })
