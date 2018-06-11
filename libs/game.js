@@ -7,6 +7,7 @@ class Game {
     this.player1 = new Player(player1Symbol, player1UserId);
     this.player2 = new Player(player2Symbol);
     this.currentPlayer = this.player1;
+    this.gameAccepted = false;
     this.gameOver = false;
     this.turn = 1;
   }
