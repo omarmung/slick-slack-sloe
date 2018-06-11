@@ -1,39 +1,43 @@
 const slackClient = require('../services/slack_client')
-const Channel = require('../libs/channel')
 let workspace; // declare this, and grab from req.app.locals.workspace at request time
+const slackTemplates = require('../templates/slack_templates')
+const slackTemplatesBoard = require('../templates/slack_board_template')
+const mustache = require('mustache')
 
 function playCommandHandler(req, res) {
-  // knock back incomplete commands
-  // does the command have a second word after 'play'?
-  if (!(req.command.commandArr.length > 1 && req.command.commandArr[1])) {
-    // no argument supplied to 'play' command
-    res.send('who do you want to play, friend?')
-    return
-  }
-
   // gather necessary info
   const slackChannelId = req.command.channelId
   const slackChannelName = req.command.channel_name || 'unknown'
   const player1UserId = req.command.userId
+  const opponentText = req.command.commandArr[1]
+  workspace = req.app.locals.workspace
   const player1Symbol = 'X'
   const player2Symbol = 'O'
-  let workspace = req.app.locals.workspace
   
   // is there already a game in progress in that channel?
   if(!isGameAlreadyBeingPlayedInChannel(slackChannelId, workspace)) {
-    // no game currently being played
-    // start game
+    // no, so we need to start a game
     let newChannelReference = workspace.createNewChannel(slackChannelId, slackChannelName, player1UserId, player1Symbol, player2Symbol)
     
-    let isItThere = workspace.getActiveChannelGameById(slackChannelId)
-    console.log('game:', isItThere)
-    res.json(isItThere)
-    return
+    // is the potential opponent in this channel?
+    slackClient.getSlackWorkspaceChannelAsync(slackChannelId)
+      .then( response => {
+        res.json({"newChannelReference": newChannelReference})
+        return
+      })
+      .catch( error => {
+        throw new Error(error)
+      })
   }
 
   // there's already a game in progress in that channel
-  res.send('There\'s already a game in progress!')
+  res.json(slackTemplates.stringTemplates.challenge.inProgress)
   return
+}
+
+function playWhoCommandHandler(req, res) {
+  // res.json({text: slackTemplatesBoard})
+  res.json(slackTemplates.stringTemplates.challenge.opponent)
 }
 
 function statusCommandHandler(req, res) {
@@ -94,8 +98,30 @@ function doesUserHaveChannelMembershipAsync(slackUserId, slackChannelId) {
     })
 }
 
+function devCommandHandlerAsync(req, res) {
+  const slackChannelId = req.body.channel_id
+
+  // text of post
+  let textToPost = req.command.channelReference.game.board.render()
+  //
+
+
+  // async call to post text to channel
+  return slackClient.postTextToChannelAsync(slackChannelId, textToPost)
+    .then((response) => {
+
+      res.json(response)
+      return
+    })
+    .catch((error) => {
+      throw new Error(error)
+    })
+}
+
 module.exports = {
-  playCommandHandler: playCommandHandler, 
+  playCommandHandler: playCommandHandler,
+  playWhoCommandHandler: playWhoCommandHandler,
+  devCommandHandlerAsync: devCommandHandlerAsync, // TODO: remove dev func
   statusCommandHandler: statusCommandHandler,
   fetchSlackChannelAsync: fetchSlackChannelAsync,
   isUserInChannelAsync: isUserInChannelAsync,

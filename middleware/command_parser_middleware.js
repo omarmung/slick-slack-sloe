@@ -1,4 +1,5 @@
 const channelGamesController = require('../controllers/channelGamesController')
+
 /** 
 *   We'll do necessary checks here,
 *   and load up a 'req.command' obj
@@ -40,6 +41,12 @@ function processBodyText(req, res, next) {
   // missing body.text, remap request to 'help'
   req.command.commandArr = ['help']
   next()
+}
+
+function devTESTING(req, res, next) {
+  // send a message
+  channelGamesController.devCommandHandlerAsync(req,res)
+  return
 }
 
 // attach channel if in activeChannels
@@ -91,7 +98,7 @@ function play(req, res, next) {
       return
     }
     // no, handle it
-    res.send('Okay, and who will you ask to play?')
+    channelGamesController.playWhoCommandHandler(req, res)
     return
   }
   next()
@@ -131,6 +138,7 @@ function help(req, res, next) {
 }
 
 module.exports = {
+  devTESTING: devTESTING,
   processBodyText: processBodyText,
   isActiveChannel: isActiveChannel,
   status: status,
