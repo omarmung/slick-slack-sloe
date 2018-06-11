@@ -57,27 +57,6 @@ describe('Workspace', function() {
       assert.isTrue(myChan1.gameInProgress, 'Game on!')
     })
     
-    it('should have a function sendMessageToChannelAsync', function() {
-      assert.isFunction(aWorkspace.getActiveChannelGameById(slackChannelId).sendMessageToChannelAsync, 'ET phone home!')
-    })
-    // describe('Posting to channel on Slack via slackClient', function() {
-    //     // disconnect 'request'
-    //     before('Stub request functionality', function(){
-    //         sinon
-    //           .stub(request, 'get')
-    //       .yields(null, null, JSON.stringify({ok: true}));
-    //   });
-    
-    //   afterEach('Restore request functionality', function(){
-    //       request.get.restore();
-    //   });
-
-    //   it('should attempt to send message', function() {
-    //     myChan1.sendMessageToChannelAsync('hi')
-    //   })
-    // })
-    
-
   })
 
   // Game tests
