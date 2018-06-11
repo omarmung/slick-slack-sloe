@@ -43,12 +43,6 @@ function processBodyText(req, res, next) {
   next()
 }
 
-function devTESTING(req, res, next) {
-  // send a message
-  channelGamesController.devCommandHandlerAsync(req,res)
-  return
-}
-
 // attach channel if in activeChannels
 function isActiveChannel(req, res, next) {
   let channelId = req.command.channelId
@@ -72,19 +66,6 @@ function isActiveChannel(req, res, next) {
   next()
 }
 
-// identify status command
-function status(req, res, next) {
-  console.log('middleware status')
- 
-  if(req.command.commandArr[0] === 'status') {
-    
-    // render status response
-    res.send('middleware status')
-    return
-  }
-  next()
-}
-
 // identify and parse play commands
 function play(req, res, next) {
   let commandArr = req.command.commandArr
@@ -104,18 +85,6 @@ function play(req, res, next) {
   next()
 }
 
-// identify leave command
-function leave(req, res, next) {
-  if(req.command.commandArr[0] === 'leave') {
-    console.log('middleware leave')
-
-    // engage leave-wanting protocol
-    // channelGamesController(req, res, next)
-    return
-  }
-  next()
-}
-
 // identify and parse move command
 function move(req, res, next) {
   if(req.command.commandArr[0] === 'move') {
@@ -127,11 +96,42 @@ function move(req, res, next) {
   next()
 }
 
+function devTESTING(req, res, next) {
+  // send a message
+  channelGamesController.devCommandHandlerAsync(req,res)
+  return
+}
+
 // identify help command
 function help(req, res, next) {
   if(req.command.commandArr[0] === 'help') {
     console.log('middleware help')
     res.send(req.app.locals.constants.helpCommandText)
+    return
+  }
+  next()
+}
+
+// identify status command
+function status(req, res, next) {
+  console.log('middleware status')
+ 
+  if(req.command.commandArr[0] === 'status') {
+    
+    // render status response
+    res.send('middleware status')
+    return
+  }
+  next()
+}
+
+// identify leave command
+function leave(req, res, next) {
+  if(req.command.commandArr[0] === 'leave') {
+    console.log('middleware leave')
+
+    // engage leave-wanting protocol
+    // channelGamesController(req, res, next)
     return
   }
   next()

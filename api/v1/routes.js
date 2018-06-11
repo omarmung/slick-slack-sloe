@@ -32,10 +32,11 @@ router.post(
     routeValidator.validate(slashCommandValidationOptions.gameRoute),
     commandParserMiddleware.processBodyText,
     commandParserMiddleware.isActiveChannel,
-    commandParserMiddleware.help,
-    commandParserMiddleware.status, 
     commandParserMiddleware.play,
     commandParserMiddleware.move, 
+    commandParserMiddleware.devTESTING, // TODO remove testing route
+    commandParserMiddleware.help,
+    commandParserMiddleware.status, 
     commandParserMiddleware.leave
   ],
   function(req, res) {
