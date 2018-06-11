@@ -19,13 +19,8 @@ class Board {
     return false;
   }
   render() {
-    console.log(
-      `
-        ${this.squares[0].mark} | ${this.squares[1].mark} | ${this.squares[2].mark}
-        ${this.squares[3].mark} | ${this.squares[4].mark} | ${this.squares[5].mark}
-        ${this.squares[6].mark} | ${this.squares[7].mark} | ${this.squares[8].mark}
-      `
-    )
+    // construct board text
+    return Mustache.render(slackTemplates.boardTemplate, this.squares);
   }
 }
 
