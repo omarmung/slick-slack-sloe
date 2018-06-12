@@ -34,16 +34,13 @@ router.post(
     commandParserMiddleware.isActiveChannel,
     commandParserMiddleware.play,
     commandParserMiddleware.move, 
-    commandParserMiddleware.devTESTING, // TODO remove testing route
     commandParserMiddleware.help,
     commandParserMiddleware.status, 
     commandParserMiddleware.leave
   ],
   function(req, res) {
-    // handle req
-    console.log('/game req.body:', req.body)
-    // channelGamesController.genericCommandHandler(req, res)
-    res.send('no takers')
+    // handle requests where we're not sure what to do
+    channelGamesController.helpCommandHandler(req, res)
     return
   }
 )

@@ -78,7 +78,7 @@ function moveCommandHandler(req,res, moveIndex) {
   // is there a game on?
   if (!workspace.activeChannelExists(slackChannelId)) {
     // sorry, no game
-    res.send('Challlenge someone to play first!')
+    res.send('Challenge someone to play first!')
     return
   }
   // if so, is it your turn?
@@ -123,6 +123,20 @@ function moveCommandHandler(req,res, moveIndex) {
   // render JSON for post, then post status to channel
   let jsonPostBody = JSON.parse(mustache.render(JSON.stringify(statusTemplate), statusView))
   slackClient.postTextToChannelPublicAsync(slackChannelId, jsonPostBody)
+}
+
+function helpCommandHandler(req, res) {
+  const slackChannelId = req.command.channelId
+  workspace = req.app.locals.workspace
+  let statusView = new GenericView(req)
+
+  // respond to slash command req
+  res.send()
+
+  // render JSON for post, then post status to channel
+  let jsonPostBody = JSON.parse(mustache.render(JSON.stringify(statusTemplate), statusView))
+  slackClient.postTextToChannelPublicAsync(slackChannelId, jsonPostBody)
+  return  
 }
 
 function fetchSlackChannelAsync(slackChannelId) {
@@ -194,7 +208,8 @@ module.exports = {
   playWhoCommandHandler: playWhoCommandHandler,
   devCommandHandlerAsync: devCommandHandlerAsync, // TODO: remove dev func
   statusCommandHandler: statusCommandHandler,
-  moveCommandHandler:moveCommandHandler,
+  moveCommandHandler: moveCommandHandler,
+  helpCommandHandler: helpCommandHandler, 
   fetchSlackChannelAsync: fetchSlackChannelAsync,
   isUserInChannelAsync: isUserInChannelAsync,
   isGameAlreadyBeingPlayedInChannel: isGameAlreadyBeingPlayedInChannel,
