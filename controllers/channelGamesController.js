@@ -3,6 +3,8 @@ let workspace; // declare this, and grab from req.app.locals.workspace at reques
 const slackTemplates = require('../templates/slack_templates')
 const slackTemplatesBoard = require('../templates/slack_board_template')
 const mustache = require('mustache')
+const statusTemplate = require('../templates/status_template')
+const GenericView = require('../views/generic_view')
 
 function playCommandHandler(req, res) {
   // gather necessary info
@@ -11,7 +13,6 @@ function playCommandHandler(req, res) {
   const player1UserId = req.command.userId
   const opponentUserName = req.command.opponentUserName
   const opponentUserId = req.command.opponentUserId
-  console.log('req.command at playCommandHandler: ', req.command)
   workspace = req.app.locals.workspace
   const player1Symbol = 'X'
   const player2Symbol = 'O'
@@ -19,9 +20,8 @@ function playCommandHandler(req, res) {
   // is there already a game in progress in that channel?
   if(!isGameAlreadyBeingPlayedInChannel(slackChannelId, workspace)) {
     // no, so we need to check if they're in the channel and start a game
-    // checking if they're in the channel will be async
-
-    // first, is the potential opponent in this channel?
+    
+    // first, is the potential opponent in this channel? (async)
     return slackClient.getSlackWorkspaceChannelAsync(slackChannelId)
       .then( response => {
 
@@ -31,9 +31,9 @@ function playCommandHandler(req, res) {
           // ok, they're a channel member
 
           // second step, let's create a channel (and it will create a game) 
-          let newChannelReference = workspace.createNewChannel(slackChannelId, slackChannelName, player1UserId, player1Symbol, player2Symbol)
-          res.json(`Okay, let's start a game and see if ${opponentUserName} wants to play!`)
-          slackClient.postTextToChannelEphemerallyAsync(slackChannelId, {"text": `Hey ${opponentUserName}, wanna play some tic-tac-toe?`}, opponentUserId)
+          let newChannelReference = workspace.createNewChannel(slackChannelId, slackChannelName, player1UserId, player1Symbol, player2Symbol, opponentUserId)
+          res.send()
+          slackClient.postTextToChannelPublicAsync(slackChannelId, {"text": `Hey ${opponentUserName}, wanna play some tic-tac-toe?`}, opponentUserId)
           return 
         }
         // oh no! that person isn't in this channel, sorry
@@ -57,17 +57,72 @@ function playWhoCommandHandler(req, res) {
 }
 
 function statusCommandHandler(req, res) {
-  // get lookup info from req
-  const slackChannelId = req.body.channel_id
-  let message;
-  // check activeChannels to see if we're tracking a game in this channel already
-  if(workspace.activeChannelExists(slackChannelId)) {
-    message = "there's a game being played already"
-  } else {
-    message = "no game is being played right now"
-  }
-  res.send(message)
+  const slackChannelId = req.command.channelId
+  workspace = req.app.locals.workspace
+  let statusView = new GenericView(req)
+
+  // respond to slash command req
+  res.send()
+
+  // render JSON for post, then post status to channel
+  let jsonPostBody = JSON.parse(mustache.render(JSON.stringify(statusTemplate), statusView))
+  slackClient.postTextToChannelPublicAsync(slackChannelId, jsonPostBody)
   return
+}
+
+function moveCommandHandler(req,res, moveIndex) {
+  const slackChannelId = req.command.channelId
+  workspace = req.app.locals.workspace
+  let statusView = new GenericView(req)
+
+  // is there a game on?
+  if (!workspace.activeChannelExists(slackChannelId)) {
+    // sorry, no game
+    res.send('Challlenge someone to play first!')
+    return
+  }
+  // if so, is it your turn?
+  let game = workspace.activeChannels[slackChannelId].game
+  if (!(game.currentPlayer.userId === req.command.userId)) {
+    // sorry, not your turn
+    res.send('It\'s not your turn yet.')
+    return
+  }
+  // if both so, can we place move on board?
+  if (!game.gameBoard.occupySquare(moveIndex, game.currentPlayer)) {
+    // nope... invalid move
+    res.send('Invalid move, try again!')
+    return
+  }
+  // check win status
+  if(game.didThisPlayerWin(game.currentPlayer)) {
+    // we have a winner!
+    this.gameOver = true
+    this.winner = game.currentPlayer
+    res.send('you won!:' + game.currentPlayer.squaresTotal)
+  } else {
+    // respond to slash command req
+    res.send()
+  }
+
+  // if game is over, these won't matter
+  if (!this.gameOver) {
+    // if no winner yet...
+
+    // ok, nice move, increment turns counter
+    let turn = game.toggleCurrentPlayer()
+
+    // check if this is a draw
+    if (turn > 9) { // is this off by 1?
+      // board is full, it's a draw!
+      game.gameOver = true
+    }
+  }
+  
+
+  // render JSON for post, then post status to channel
+  let jsonPostBody = JSON.parse(mustache.render(JSON.stringify(statusTemplate), statusView))
+  slackClient.postTextToChannelPublicAsync(slackChannelId, jsonPostBody)
 }
 
 function fetchSlackChannelAsync(slackChannelId) {
@@ -139,6 +194,7 @@ module.exports = {
   playWhoCommandHandler: playWhoCommandHandler,
   devCommandHandlerAsync: devCommandHandlerAsync, // TODO: remove dev func
   statusCommandHandler: statusCommandHandler,
+  moveCommandHandler:moveCommandHandler,
   fetchSlackChannelAsync: fetchSlackChannelAsync,
   isUserInChannelAsync: isUserInChannelAsync,
   isGameAlreadyBeingPlayedInChannel: isGameAlreadyBeingPlayedInChannel,
