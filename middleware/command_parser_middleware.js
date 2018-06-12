@@ -133,7 +133,7 @@ function status(req, res, next) {
   if(req.command.commandArr[0] === 'status') {
     
     // render status response
-    res.send('middleware status')
+    channelGamesController.statusCommandHandler(req, res)
     return
   }
   next()
