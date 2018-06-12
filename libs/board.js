@@ -1,4 +1,7 @@
 const Square = require('./square')
+const mustache = require('mustache')
+const boardTemplate = require('../templates/slack_board_template')
+
 class Board {
   constructor() {
     this.squares = []
@@ -11,16 +14,19 @@ class Board {
   }
   occupySquare(index, player){
     let square = this.squares[index]
-    if(!square.mark) {
-      square.mark = true
+    
+    // add symbol to square and send square value to player total
+    // and indicate success
+    if(!square.marked) {
+      square.mark = player.symbol
       player.occupiedSquaresByValue.push(square.val)
-      return true;
+      return true
     }
-    return false;
+    return false
   }
   render() {
     // construct board text
-    return Mustache.render(slackTemplates.boardTemplate, this.squares);
+    return mustache.render(boardTemplate, this.squares);
   }
 }
 
