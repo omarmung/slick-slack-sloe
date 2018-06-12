@@ -16,9 +16,9 @@ class Workspace {
     }
     throw new Error('channel not found')
   }
-  createNewChannel(slackChannelId, channelName, player1UserId, player1Symbol, player2Symbol) {
+  createNewChannel(slackChannelId, channelName, player1UserId, player1Symbol, player2Symbol, player2UserId, player2UserName, player1UserName) {
     // instantiate new channel
-    let channel = new Channel(slackChannelId, channelName, player1UserId, player1Symbol, player2Symbol)
+    let channel = new Channel(slackChannelId, channelName, player1UserId, player1Symbol, player2Symbol, player2UserId, player2UserName, player1UserName)
     // add to activeChannels storage
     this.activeChannels[slackChannelId] = channel
     // return reference to new channel

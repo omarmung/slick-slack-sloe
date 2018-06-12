@@ -20,6 +20,8 @@ function playCommandHandler(req, res) {
   workspace = req.app.locals.workspace
   const player1Symbol = 'X'
   const player2Symbol = 'O'
+  const player1UserName = req.command.userNameMaybe
+  const player2UserName = opponentUserName
   
   // is there already a game in progress in that channel?
   if(!isGameAlreadyBeingPlayedInChannel(slackChannelId, workspace)) {
@@ -29,13 +31,20 @@ function playCommandHandler(req, res) {
     return slackClient.getSlackWorkspaceChannelAsync(slackChannelId)
       .then( response => {
 
+        // what is this user's username?
+        if (player2UserName === null){
+          // Slack's user_name is being phased out
+          // TODO: go grab this from Web API
+          player2UserName = 'Player 1'
+        }
+
         // try to match the input userId to the channel membership
         let isMember = response.members.includes(opponentUserId)
         if (isMember) {
           // ok, they're a channel member
 
-          // second step, let's create a channel (and it will create a game) 
-          let newChannelReference = workspace.createNewChannel(slackChannelId, slackChannelName, player1UserId, player1Symbol, player2Symbol, opponentUserId)
+          // second step, let's create a channel (and it will create a game)
+          let newChannelReference = workspace.createNewChannel(slackChannelId, slackChannelName, player1UserId, player1Symbol, player2Symbol, opponentUserId, player2UserName, player1UserName)
           res.send()
           slackClient.postTextToChannelPublicAsync(slackChannelId, {"text": `Hey ${opponentUserName}, wanna play some tic-tac-toe?`}, opponentUserId)
           return 
@@ -62,6 +71,7 @@ function playWhoCommandHandler(req, res) {
 
 function statusCommandHandler(req, res) {
   const slackChannelId = req.command.channelId
+  const userId = req.command.userId
   workspace = req.app.locals.workspace
   let statusView = new GenericView(req)
 
@@ -70,7 +80,7 @@ function statusCommandHandler(req, res) {
 
   // render JSON for post, then post status to channel
   let jsonPostBody = JSON.parse(mustache.render(JSON.stringify(statusTemplate), statusView))
-  slackClient.postTextToChannelPublicAsync(slackChannelId, jsonPostBody)
+  slackClient.postTextToChannelEphemeralAsync(slackChannelId, jsonPostBody, userId)
   return
 }
 
@@ -149,22 +159,27 @@ function quitCommandHandler(req, res) {
   const userId = req.command.userId
   workspace = req.app.locals.workspace
   let statusView = new GenericView(req)
-
+  
   // respond to slash command req
   res.send()
-
+  
   // if you successfully quit, that will be public
   // if you're not playing, or there's no game being played,
   // that will be an ephemeral message
   
   // is there a game being played in the channel?
-  // if that's so, are you one of the players?
-  if (true) {
-    // public
-    // render JSON for post, then post status to channel
-    let jsonPostBody = JSON.parse(mustache.render(JSON.stringify(quitTemplate), statusView))
-    slackClient.postTextToChannelPublicAsync(slackChannelId, jsonPostBody, userId)
-    return  
+  let inProgress = isGameAlreadyBeingPlayedInChannel(slackChannelId, workspace)
+  if (inProgress) {
+    let game = workspace.activeChannels[slackChannelId].game
+    let isUserPlaying = ( (game.player1.userId === req.command.userId) && (game.player2.userId === req.command.userId) ) ? true: false
+    // with those, we can decide...
+    if(isUserPlaying) {
+      // public
+      // render JSON for post, then post status to channel
+      let jsonPostBody = JSON.parse(mustache.render(JSON.stringify(quitTemplate), statusView))
+      slackClient.postTextToChannelPublicAsync(slackChannelId, jsonPostBody, userId)
+      return  
+    }
   }
   // private
   // render JSON for post, then post status to channel
@@ -214,26 +229,6 @@ function doesUserHaveChannelMembershipAsync(slackUserId, slackChannelId) {
       })
       // return a boolean
       return matchingId ? true : false
-    })
-}
-
-function devCommandHandlerAsync(req, res) {
-  const slackChannelId = req.body.channel_id
-
-  // text of post
-  let textToPost = req.command.channelReference.game.board.render()
-  //
-
-
-  // async call to post text to channel
-  return slackClient.postTextToChannelAsync(slackChannelId, textToPost)
-    .then((response) => {
-
-      res.json(response)
-      return
-    })
-    .catch((error) => {
-      throw new Error(error)
     })
 }
 

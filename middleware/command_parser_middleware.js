@@ -24,6 +24,7 @@ function processBodyText(req, res, next) {
   // create results obj
   req.command = {
     channelId: req.body.channel_id,
+    userNameMaybe: req.body.user_name || null, 
     userId: req.body.user_id,
     responseUrl: req.body.response_url,
     token: req.body.token,
@@ -58,6 +59,7 @@ function isActiveChannel(req, res, next) {
     // get the channel ref from storage and add to this request
     let activeChannelReference = req.app.locals.workspace.getActiveChannelGameById(channelId)
     req.command.channelReference = activeChannelReference
+    req.command.game = activeChannelReference.game
     console.log('middleware isActiveChannel: retrieved channel to request')
    
     // we're done here
@@ -127,8 +129,7 @@ function move(req, res, next) {
 
 // STATUS - identify status command
 function status(req, res, next) {
-  console.log('middleware status')
- 
+   // matches?
   if(req.command.commandArr[0] === 'status') {
     
     // render status response

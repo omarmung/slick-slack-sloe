@@ -33,9 +33,9 @@ router.post(
     commandParserMiddleware.processBodyText,
     commandParserMiddleware.isActiveChannel,
     commandParserMiddleware.quit,
+    commandParserMiddleware.status,
     commandParserMiddleware.play,
     commandParserMiddleware.move, 
-    commandParserMiddleware.status,
     commandParserMiddleware.help
   ],
   function(req, res) {
