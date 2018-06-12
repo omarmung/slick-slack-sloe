@@ -1,0 +1,12 @@
+{
+    "channel": "{{req.body.channel_id}}",
+    "attachments": [
+      {
+        "fallback": "Current game status",
+        "color": "#36a64f",
+        "pretext": "Game Status",
+        "title": "{{#isGameBeingPlayed}}Game On!{{/isGameBeingPlayed}}{{^isGameBeingPlayed}}No One is Playing{{/isGameBeingPlayed}}",
+        "text": "{{#isGameBeingPlayed}}{{{theBoard}}}{{/isGameBeingPlayed}}{{^isGameBeingPlayed}}Type '/ttt play <@someone>' to start a game!{{/isGameBeingPlayed}}"
+      }
+    ]
+  }

@@ -19,16 +19,16 @@ function getSlackWorkspaceChannelAsync(slackChannelId) {
 }
 
 // post a message to the channel, either publicly, or ephemerally (just to one user)
-function postTextToChannelPubliclyAsync(slackChannelId, messagePayloadJson) {
-  let messagePayloadJson = messagePayloadJson
+function postTextToChannelPublicAsync(slackChannelId, messagePayloadJson) {
+  messagePayloadJson = messagePayloadJson
   messagePayloadJson.channel = slackChannelId
 
   // make promise to make a call to Slack Web API
-  return web.chat.postMessage(postJson)
+  return web.chat.postMessage(messagePayloadJson)
 }
 
 // post an ephemeral message (to a single user) in the channel
-function postTextToChannelEphemerallyAsync(slackChannelId, messagePayloadJson, slackUserId) {
+function postTextToChannelEphemeralAsync(slackChannelId, messagePayloadJson, slackUserId) {
   let messagePayloadJson1 = messagePayloadJson
   messagePayloadJson1.channel = slackChannelId
   messagePayloadJson1.user = slackUserId
@@ -39,7 +39,7 @@ function postTextToChannelEphemerallyAsync(slackChannelId, messagePayloadJson, s
 
 module.exports = {
   getSlackWorkspaceChannelAsync: getSlackWorkspaceChannelAsync,
-  postTextToChannelPubliclyAsync: postTextToChannelPubliclyAsync,
-  postTextToChannelEphemerallyAsync: postTextToChannelEphemerallyAsync
+  postTextToChannelPublicAsync: postTextToChannelPublicAsync,
+  postTextToChannelEphemeralAsync: postTextToChannelEphemeralAsync
 }
 

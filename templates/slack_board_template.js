@@ -1,1 +1,1 @@
-module.exports = "```| {{1.mark}} | {{2.mark}} | {{3.mark}} |\n|---+---+---|\n| {{4.mark}} | {{5.mark}} | {{6.mark}} |\n|---+---+---|\n| {{7.mark}} | {{8.mark}} | {{9.mark}} |```"
+module.exports = "```| {{0.mark}} | {{1.mark}} | {{2.mark}} |\\n|---+---+---|\\n| {{3.mark}} | {{4.mark}} | {{5.mark}} |\\n|---+---+---|\\n| {{6.mark}} | {{7.mark}} | {{8.mark}} |```"
