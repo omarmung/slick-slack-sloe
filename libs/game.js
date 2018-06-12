@@ -2,10 +2,10 @@ const Board = require('./board')
 const Player = require('./player')
 const constants = require('./constants')
 class Game {
-  constructor(player1UserId, player1Symbol, player2Symbol, player2UserId) {
+  constructor(player1UserId, player1Symbol, player2Symbol, player2UserId, player1UserName, player2UserName) {
     this.gameBoard = new Board();
-    this.player1 = new Player(player1Symbol, player1UserId, player1Username);
-    this.player2 = new Player(player2Symbol, player2UserId, player2Username); 
+    this.player1 = new Player(player1Symbol, player1UserId, player1UserName);
+    this.player2 = new Player(player2Symbol, player2UserId, player2UserName); 
     this.currentPlayer = this.player1;
     this.gameAccepted = false;
     this.winner = null;
