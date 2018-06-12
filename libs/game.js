@@ -4,10 +4,11 @@ const constants = require('./constants')
 class Game {
   constructor(player1UserId, player1Symbol, player2Symbol, player2UserId) {
     this.gameBoard = new Board();
-    this.player1 = new Player(player1Symbol, player1UserId);
-    this.player2 = new Player(player2Symbol, player2UserId); 
+    this.player1 = new Player(player1Symbol, player1UserId, player1Username);
+    this.player2 = new Player(player2Symbol, player2UserId, player2Username); 
     this.currentPlayer = this.player1;
     this.gameAccepted = false;
+    this.winner = null;
     this.gameOver = false;
     this.turn = 1;
   }
@@ -28,7 +29,7 @@ class Game {
   }
   toggleCurrentPlayer() {
     // set currentPlayer to the next player
-    // this.currentPlayer.userId === this.player1.userId ? this.currentPlayer = this.player2 : this.currentPlayer = this.player1
+    this.currentPlayer.userId === this.player1.userId ? this.currentPlayer = this.player2 : this.currentPlayer = this.player1
     // increment round
     this.turn++
     return this.turn
