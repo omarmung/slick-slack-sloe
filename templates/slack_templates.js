@@ -32,55 +32,5 @@ module.exports = {
     unretire: {
       unretired: "Welcome back. Future challenges will no longer be automatically declined."
     }
-  },
-  slackMessageJsonTemplates: {
-    withBoard: {
-      "channel": "{{slackChannelId}}",
-      "text": "{{player1Name}} vs. {{player2Name}}, round {{calcRoundNumber}}",
-      "attachments": [
-        {
-          "fallback": "Tic-tac-toe App",
-          "color": "#36a64f",
-          "author_name": "Bobby Tables",
-          "author_link": "http://flickr.com/bobby/",
-          "author_icon": "https://upload.wikimedia.org/wikipedia/commons/4/45/Right-facing-Arrow-icon.jpg",
-          "title": "Current Stats",
-          "text": "{{boardTemplate}}",
-          "fields": [
-            {
-              "title": "Priority",
-              "value": "High",
-              "short": false
-            }
-          ],
-          "footer": "Tic-tac-toe App",
-          "footer_icon": "https://upload.wikimedia.org/wikipedia/commons/4/45/Right-facing-Arrow-icon.jpg" 
-        }
-      ]
-    },
-    withoutBoard: {
-      "channel": "{{slackChannelId}}",
-      "text": "{{player1Name}} vs. {{player2Name}}, round {{calcRoundNumber}}",
-      "attachments": [
-        {
-          "fallback": "Tic-tac-toe App",
-          "color": "#36a64f",
-          "author_name": "Bobby Tables",
-          "author_link": "http://flickr.com/bobby/",
-          "author_icon": "https://upload.wikimedia.org/wikipedia/commons/4/45/Right-facing-Arrow-icon.jpg",
-          "title": "Current Stats",
-          "fields": [
-            {
-              "title": "Priority",
-              "value": "High",
-              "short": false
-            }
-          ],
-          "footer": "Tic-tac-toe App",
-          "footer_icon": "https://upload.wikimedia.org/wikipedia/commons/4/45/Right-facing-Arrow-icon.jpg" 
-        }
-      ]
-    },
-  }, 
-
+  }
 }

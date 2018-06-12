@@ -1,12 +1,11 @@
 class GenericView {
   constructor(req) {
-    this.req = req
+    this.req = req;
   }
   isGameBeingPlayed() {
     return this.req.app.locals.workspace.activeChannelExists(this.req.command.channelId)
   }
-  theBoard(){
-    // console.log(this.req.app.locals.workspace.getActiveChannelGameById(this.req.command.channelId).gameBoard)
+  theBoard() {
     return this.req.app.locals.workspace.activeChannels[this.req.command.channelId].game.gameBoard.render()
   }
 }
