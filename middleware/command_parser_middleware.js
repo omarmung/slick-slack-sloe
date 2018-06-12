@@ -1,5 +1,6 @@
 const channelGamesController = require('../controllers/channelGamesController')
 const parseExpandedUsername = require('../services/username_parser')
+const parseMoveInput = require('../services/move_parser')
 /** 
 *   We'll do necessary checks here,
 *   and load up a 'req.command' obj
@@ -103,9 +104,23 @@ function play(req, res, next) {
 function move(req, res, next) {
   if(req.command.commandArr[0] === 'move') {
     console.log('middleware move')
-    res.send('middleware move')
-    // next()
-    return
+    
+    if(req.command.commandArr.length > 1) {
+      // ok to parse
+      // grab everything after the first space
+      let moveString = req.command.commandArr.slice(1).join('')
+      console.log('moveString:', moveString)
+      // and try to parse it
+      const parsedMoveIndex = parseMoveInput(moveString)
+      console.log('parseMoveIndex:', parsedMoveIndex)
+      // if it succeeded, we have a valid move
+      if (parsedMoveIndex !== null && parsedMoveIndex !== undefined) {
+        // valid, send to handler
+        channelGamesController.moveCommandHandler(req, res, parsedMoveIndex)
+        return
+      }
+      // invalid move, fallthrough
+    }
   }
   next()
 }
