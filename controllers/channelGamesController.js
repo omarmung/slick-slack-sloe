@@ -4,6 +4,10 @@ const slackTemplates = require('../templates/slack_templates')
 const slackTemplatesBoard = require('../templates/slack_board_template')
 const mustache = require('mustache')
 const statusTemplate = require('../templates/status_template')
+const helpTemplate = require('../templates/help_template')
+const quitTemplate = require('../templates/quit_template')
+const moveTemplate = require('../templates/move_template')
+const playTemplate = require('../templates/play_template')
 const GenericView = require('../views/generic_view')
 
 function playCommandHandler(req, res) {
@@ -127,6 +131,7 @@ function moveCommandHandler(req,res, moveIndex) {
 
 function helpCommandHandler(req, res) {
   const slackChannelId = req.command.channelId
+  const userId = req.command.userId
   workspace = req.app.locals.workspace
   let statusView = new GenericView(req)
 
@@ -134,9 +139,38 @@ function helpCommandHandler(req, res) {
   res.send()
 
   // render JSON for post, then post status to channel
-  let jsonPostBody = JSON.parse(mustache.render(JSON.stringify(statusTemplate), statusView))
-  slackClient.postTextToChannelPublicAsync(slackChannelId, jsonPostBody)
+  let jsonPostBody = JSON.parse(mustache.render(JSON.stringify(helpTemplate), statusView))
+  slackClient.postTextToChannelEphemeralAsync(slackChannelId, jsonPostBody, userId)
   return  
+}
+
+function quitCommandHandler(req, res) {
+  const slackChannelId = req.command.channelId
+  const userId = req.command.userId
+  workspace = req.app.locals.workspace
+  let statusView = new GenericView(req)
+
+  // respond to slash command req
+  res.send()
+
+  // if you successfully quit, that will be public
+  // if you're not playing, or there's no game being played,
+  // that will be an ephemeral message
+  
+  // is there a game being played in the channel?
+  // if that's so, are you one of the players?
+  if (true) {
+    // public
+    // render JSON for post, then post status to channel
+    let jsonPostBody = JSON.parse(mustache.render(JSON.stringify(quitTemplate), statusView))
+    slackClient.postTextToChannelPublicAsync(slackChannelId, jsonPostBody, userId)
+    return  
+  }
+  // private
+  // render JSON for post, then post status to channel
+  let jsonPostBody = JSON.parse(mustache.render(JSON.stringify(quitTemplate), statusView))
+  slackClient.postTextToChannelEphemeralAsync(slackChannelId, jsonPostBody, userId)
+  return
 }
 
 function fetchSlackChannelAsync(slackChannelId) {
@@ -206,8 +240,8 @@ function devCommandHandlerAsync(req, res) {
 module.exports = {
   playCommandHandler: playCommandHandler,
   playWhoCommandHandler: playWhoCommandHandler,
-  devCommandHandlerAsync: devCommandHandlerAsync, // TODO: remove dev func
   statusCommandHandler: statusCommandHandler,
+  quitCommandHandler: quitCommandHandler,
   moveCommandHandler: moveCommandHandler,
   helpCommandHandler: helpCommandHandler, 
   fetchSlackChannelAsync: fetchSlackChannelAsync,

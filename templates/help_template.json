@@ -1,0 +1,40 @@
+{
+  "channel": "{{req.body.channel_id}}",
+  "attachments": [
+    {
+      "fallback": "Available Commands",
+      "color": "#36a64f",
+      "pretext": "Here are the basics...",
+      "title": "Type the '/ttt' command and then:",
+      "text": "Example: '/ttt move a1'",
+      "fields": [
+        {
+          "title": "help",
+          "value": "This help menu",
+          "short": true
+        },
+        {
+          "title": "status",
+          "value": "Status of the current game{{^isGameBeingPlayed}}, if there is one{{/isGameBeingPlayed}}",
+          "short": true
+        },
+        {
+          "title": "play <@username_goes_here>",
+          "value": "Starts a game in this channel",
+          "short": true
+        },
+        {
+          "title": "move <A3>",
+          "value": "Make a move, when it's your turn",
+          "short": true
+        },
+        {
+          "title": "quit",
+          "value": "Leaves the game you're playing here",
+          "short": true
+        }
+
+      ]
+    }
+  ]
+}

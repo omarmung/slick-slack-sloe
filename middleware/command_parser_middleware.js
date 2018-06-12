@@ -69,7 +69,7 @@ function isActiveChannel(req, res, next) {
   next()
 }
 
-// identify and parse play commands
+// PLAY - identify and parse play commands
 function play(req, res, next) {
   let commandArr = req.command.commandArr
   if(commandArr[0] === 'play') {
@@ -100,7 +100,7 @@ function play(req, res, next) {
   next()
 }
 
-// identify and parse move command
+// MOVE - identify and parse move command
 function move(req, res, next) {
   if(req.command.commandArr[0] === 'move') {
     console.log('middleware move')
@@ -125,23 +125,7 @@ function move(req, res, next) {
   next()
 }
 
-function devTESTING(req, res, next) {
-  // send a message
-  channelGamesController.devCommandHandlerAsync(req,res)
-  return
-}
-
-// identify help command
-function help(req, res, next) {
-  if(req.command.commandArr[0] === 'help') {
-    console.log('middleware help')
-    res.send(req.app.locals.constants.helpCommandText)
-    return
-  }
-  next()
-}
-
-// identify status command
+// STATUS - identify status command
 function status(req, res, next) {
   console.log('middleware status')
  
@@ -154,25 +138,31 @@ function status(req, res, next) {
   next()
 }
 
-// identify leave command
-function leave(req, res, next) {
-  if(req.command.commandArr[0] === 'leave') {
+// QUIT - identify quit command
+function quit(req, res, next) {
+  let word = req.command.commandArr[0]
+  if(word === 'quit' || word === 'leave') {
     console.log('middleware leave')
 
     // engage leave-wanting protocol
-    // channelGamesController(req, res, next)
+    channelGamesController.quitCommandHandler(req, res, next)
     return
   }
   next()
 }
 
+// HELP - help command
+function help(req, res, next) {
+  // render status response
+  channelGamesController.helpCommandHandler(req, res)
+}
+
 module.exports = {
-  devTESTING: devTESTING,
   processBodyText: processBodyText,
   isActiveChannel: isActiveChannel,
   status: status,
   play: play,
-  leave: leave,
+  quit: quit,
   move: move,
   help: help
 }

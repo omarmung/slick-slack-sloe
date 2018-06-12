@@ -1,0 +1,12 @@
+{
+  "channel": "{{req.body.channel_id}}",
+  "attachments": [
+    {
+      "fallback": "Quit the game",
+      "color": "#36a64f",
+      "pretext": "Quit the Game",
+      "title": "{{#isGameBeingPlayed}}The game is ended{{/isGameBeingPlayed}}{{^isGameBeingPlayed}}No One is Playing{{/isGameBeingPlayed}}",
+      "text": "{{#isGameBeingPlayed}}{{{theBoard}}}{{/isGameBeingPlayed}}{{^isGameBeingPlayed}}Hmm... try '/ttt help' for more options{{/isGameBeingPlayed}}"
+    }
+  ]
+}
