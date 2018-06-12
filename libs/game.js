@@ -1,6 +1,6 @@
 const Board = require('./board')
 const Player = require('./player')
-
+const constants = require('./constants')
 class Game {
   constructor(player1UserId, player1Symbol, player2Symbol, player2UserId) {
     this.gameBoard = new Board();
@@ -12,28 +12,27 @@ class Game {
     this.turn = 1;
   }
   didThisPlayerWin(player) {
-    if ( this.winValues.some( winValue => winValue & player.squaresTotal ) ) {
-      return true
+    // is a win value represented, bit-wise, in this total?
+    // (if this were decimal, this might look like: 1,10,100 -> win val of 111)
+    // more about this in constants.js at winValues
+    const isWinInTotal = (winValue) => {
+      return winValue === (winValue & player.squaresTotal) 
     }
-    return false
+    // compare against each possible winValue of: 3 rows, 3 columns, 2 diagonals
+    let won = constants.winValues.some( (winValue) => isWinInTotal(winValue) )
+    return won ? true : false
   }
   didEitherPlayerWin() {
     // check players' total occupied square values against win values list
-    return [this.player1, this.player2].some( player => this.this.didThisPlayerWin(player) )
+    return [this.player1, this.player2].some( player => this.didThisPlayerWin(player) )
   }
   toggleCurrentPlayer() {
     // set currentPlayer to the next player
-    this.currentPlayer.userId === this.player1.userId ? this.currentPlayer = this.player2 : this.currentPlayer = this.player1
+    // this.currentPlayer.userId === this.player1.userId ? this.currentPlayer = this.player2 : this.currentPlayer = this.player1
     // increment round
     this.turn++
     return this.turn
   }
 }
-
-// since we enumerated our squares by powers of two
-// each is basically a binary place
-// so our decimal total and these three-in-a-row sums show up in binary
-// with an &, we can see if one of these is represented there
-Game.prototype.winValues = [7, 56, 448, 73, 146, 292, 273, 84]
 
 module.exports = Game;
