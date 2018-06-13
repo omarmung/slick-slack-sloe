@@ -14,7 +14,7 @@ function getSlackWorkspaceChannelAsync(slackChannelId) {
     .catch((error) => {
       // Error
       console.log('slackClient.getSlackWorkspaceChannelAsync error: ', error)
-      throw new Error(error)
+      throw (error)
     });
 }
 
@@ -25,6 +25,9 @@ function postTextToChannelPublicAsync(slackChannelId, messagePayloadJson) {
 
   // make promise to make a call to Slack Web API
   return web.chat.postMessage(messagePayloadJson)
+    .catch(error => {
+      throw(error)
+    })
 }
 
 // post an ephemeral message (to a single user) in the channel
@@ -35,6 +38,9 @@ function postTextToChannelEphemeralAsync(slackChannelId, messagePayloadJson, sla
 
   // make promise to make a call to Slack Web API
   return web.chat.postEphemeral(messagePayloadJson)
+  .catch(error => {
+    throw(error)
+  })
 }
 
 module.exports = {

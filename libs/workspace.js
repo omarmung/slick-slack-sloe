@@ -8,7 +8,8 @@ class Workspace {
     return this.activeChannels.hasOwnProperty(slackChannelId)
   }
   activeChannelRemove(slackChannelId) {
-    return delete this.activeChannels[slackChannelId]
+    delete this.activeChannels[slackChannelId]
+    return
   }
   getActiveChannelGameById(slackChannelId) {
     if(this.activeChannelExists(slackChannelId)) {
