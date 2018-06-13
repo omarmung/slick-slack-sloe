@@ -150,7 +150,7 @@ function moveCommandHandler(req,res, moveIndex) {
 
 
   // if game is not over
-  if (!this.gameOver) {
+  if (!game.gameOver) {
     // if no winner yet...
 
     // check if this is a draw
@@ -165,9 +165,8 @@ function moveCommandHandler(req,res, moveIndex) {
   let jsonPostBody = JSON.parse(mustache.render(JSON.stringify(moveTemplate), statusView))
   slackClient.postTextToChannelPublicAsync(slackChannelId, jsonPostBody).then(function(response) {
     
-    console.log('game.waitingPlayer', game.waitingPlayer)
-    console.log('game.currentPlayer', game.currentPlayer)
-    if (this.gameOver) {
+    // remove old games
+    if (game.gameOver) {
       // and delete the channel, that's a wrap
       console.log('removing from activeChannels')
       workspace.activeChannelRemove(slackChannelId)
@@ -215,7 +214,7 @@ function quitCommandHandler(req, res) {
   let inProgress = isGameAlreadyBeingPlayedInChannel(slackChannelId, workspace)
   if (inProgress) {
     let game = workspace.activeChannels[slackChannelId].game
-    let isUserPlaying = ( (game.player1.userId === req.command.userId) && (game.player2.userId === req.command.userId) ) ? true: false
+    let isUserPlaying = ( (game.player1.userId === req.command.userId) || (game.player2.userId === req.command.userId) ) ? true: false
     // with those, we can decide...
     if(isUserPlaying) {
       // public
