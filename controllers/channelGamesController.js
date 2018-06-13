@@ -23,6 +23,7 @@ function playCommandHandler(req, res) {
   const player2Symbol = 'O'
   const player1UserName = req.command.userNameMaybe
   const player2UserName = opponentUserName
+  let statusView = new GenericView(req)
   
   // is there already a game in progress in that channel?
   if(!isGameAlreadyBeingPlayedInChannel(slackChannelId, workspace)) {
@@ -30,7 +31,7 @@ function playCommandHandler(req, res) {
     
     // first, is the potential opponent in this channel? (async)
     return slackClient.getSlackWorkspaceChannelAsync(slackChannelId)
-      .then( response => {
+      .then( function(response) {
 
         // what is this user's username?
         if (player2UserName === null){
@@ -49,7 +50,17 @@ function playCommandHandler(req, res) {
           res.send()
 
             // render JSON for post, then post status to channel
-          slackClient.postTextToChannelPublicAsync(slackChannelId, {"text": `${opponentUserName}, the game is afoot! '/ttt help' for commands!`}, opponentUserId)
+          slackClient.postTextToChannelPublicAsync(slackChannelId, {"text": `${opponentUserName}, the game is afoot! '/ttt help' for commands!`}, opponentUserId).then((response) => {
+            
+              // render JSON for post, then post status to channel
+            let jsonPostBody = JSON.parse(mustache.render(JSON.stringify(statusTemplate), statusView))
+            slackClient.postTextToChannelPublicAsync(slackChannelId, jsonPostBody)
+              .catch((error) => {
+                console.log(error)
+                throw(error)
+              })
+
+          })
           return 
         }
         // oh no! that person isn't in this channel, sorry
@@ -152,7 +163,7 @@ function moveCommandHandler(req,res, moveIndex) {
   
   // render JSON for post, then post status to channel
   let jsonPostBody = JSON.parse(mustache.render(JSON.stringify(moveTemplate), statusView))
-  slackClient.postTextToChannelPublicAsync(slackChannelId, jsonPostBody).then((response) => {
+  slackClient.postTextToChannelPublicAsync(slackChannelId, jsonPostBody).then(function(response) {
     
     console.log('game.waitingPlayer', game.waitingPlayer)
     console.log('game.currentPlayer', game.currentPlayer)
@@ -211,7 +222,7 @@ function quitCommandHandler(req, res) {
       // render JSON for post, then post status to channel
       let jsonPostBody = JSON.parse(mustache.render(JSON.stringify(quitTemplate), statusView))
       slackClient.postTextToChannelPublicAsync(slackChannelId, jsonPostBody, userId)
-        .then((response) => {
+        .then(function(response) {
           // and delete the channel, that's a wrap
           workspace.activeChannelRemove(slackChannelId)
           return  

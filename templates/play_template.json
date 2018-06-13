@@ -1,0 +1,13 @@
+{
+  "channel": "{{req.body.command.channelId}}",
+  "attachments": [
+    {
+      "fallback": "Current game status",
+      "color": "#36a64f",
+      "pretext": "Game Status{{#isGameBeingPlayed}}: Game On!{{/isGameBeingPlayed}}",
+      "title": "{{#isGameBeingPlayed}}{{req.command.game.player1.userName}} X's vs. {{req.command.game.player2.userName}} O's{{/isGameBeingPlayed}}{{/isGameBeingPlayed}}{{^isGameBeingPlayed}}No One is Playing{{/isGameBeingPlayed}}",
+      "text": "{{#isGameBeingPlayed}}{{{theBoard}}}{{/isGameBeingPlayed}}{{^isGameBeingPlayed}}Type '/ttt play <@someone>' to start a game!{{/isGameBeingPlayed}}",
+      "footer": "{{#isGameBeingPlayed}}It's {{req.command.game.currentPlayer.userName}}'s turn!{{/isGameBeingPlayed}}"
+    }
+  ]
+}

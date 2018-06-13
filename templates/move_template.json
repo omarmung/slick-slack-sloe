@@ -1,0 +1,13 @@
+{
+  "channel": "{{req.body.channelId}}",
+  "attachments": [
+    {
+      "fallback": "Move command",
+      "color": "#36a64f",
+      "pretext": "Move #{{req.command.game.turn}}",
+      "title": "{{^req.command.game.winner}}{{^req.command.game.draw}}{{req.command.game.waitingPlayer.userName}} to {{req.command.commandArr.1}}{{/req.command.game.draw}}{{/req.command.game.winner}} {{#req.command.game.winner}}{{req.command.game.waitingPlayer.userName}} Wins! {{/req.command.game.winner}} {{#req.command.game.draw}}{{req.command.game.player1.userName}} and {{req.command.game.player2.userName}} It's a Draw!{{/req.command.game.draw}}",
+      "text": "{{#isGameBeingPlayed}}{{{theBoard}}}{{/isGameBeingPlayed}}{{^isGameBeingPlayed}}Type '/ttt play <@someone>' to start a game!{{/isGameBeingPlayed}}",
+      "footer": "{{^req.command.game.winner}}{{^req.command.game.draw}}{{req.command.game.currentPlayer.userName}} is up!{{/req.command.game.draw}}{{/req.command.game.winner}}{{#req.command.game.winner}}Type '/ttt challenge <@user>' to challenge{{/req.command.game.winner}}{{#req.command.game.draw}}Type '/ttt challenge <@user>' to challenge{{/req.command.game.draw}}"
+    }
+  ]
+}
