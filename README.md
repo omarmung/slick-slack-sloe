@@ -16,19 +16,19 @@ If the app is running, check out the [API documentation page](https://slick-slac
 To get the game running on Slack, we'll need four things, in this order:
 
 1. The URL at which we'll be hosting the service contained in this repo
-2. A Slack Developer Preview Workspace App integration created through Slack's api.slack.com webUI at: https://api.slack.com/workspace-apps-preview
+2. A Slack Developer Preview Workspace App integration created through Slack's api.slack.com webUI at: https://api.slack.com/workspace-apps-previe
 3. A /slash_command, created within #2
 4. A token each from #2 and #3 in the app's page, https://api.slack.com/apps, that we'll use to run our service so that it can connect to Slack:
     
     i. The 'Verification Token,' found under Basic Information > App Credentials
 
-    ii. The OAuth Access Token, starting with 'xoxa-,' found under OAuth & Permissions > OAuth settings > Your Workspace Settings
+    ii. The OAuth Access Token, starting with 'xoxa-,' found under OAuth & Permissions > OAuth settings > Your Workspace Settings, with two permissions added:  'chat.write,' and 'channels.read'
 <br /><br />
 
 ### Making the Workspace App and /slash_command
 For #2 and #3, the app and /slash_command, the set-up in the app's page https://api.slack.com/apps, goes like so:
 
-1. Make a Workspace App and a new /slash_command
+1. Make a Workspace App and a new /slash_command.
 2. Name the command '/ttt,' for 'tic-tac-toe.'
 3. Then, scroll down to the 'Integration Settings' section.
 4. The URL will be wherever you'll be hosting this service, plus '/api/v1/game,' for example http://whitehouse.gov/api/v1/game
