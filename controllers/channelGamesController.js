@@ -17,6 +17,7 @@ function playCommandHandler(req, res) {
   const player1UserId = req.command.userId
   const opponentUserName = req.command.opponentUserName
   const opponentUserId = req.command.opponentUserId
+  console.log('opponentUserName:', opponentUserName)
   workspace = req.app.locals.workspace
   const player1Symbol = 'X'
   const player2Symbol = 'O'
@@ -46,7 +47,9 @@ function playCommandHandler(req, res) {
           // second step, let's create a channel (and it will create a game)
           let newChannelReference = workspace.createNewChannel(slackChannelId, slackChannelName, player1UserId, player1Symbol, player2Symbol, opponentUserId, player2UserName, player1UserName)
           res.send()
-          slackClient.postTextToChannelPublicAsync(slackChannelId, {"text": `Hey ${opponentUserName}, wanna play some tic-tac-toe?`}, opponentUserId)
+
+            // render JSON for post, then post status to channel
+          slackClient.postTextToChannelPublicAsync(slackChannelId, {"text": `${opponentUserName}, the game is afoot! '/ttt help' for commands!`}, opponentUserId)
           return 
         }
         // oh no! that person isn't in this channel, sorry
@@ -81,6 +84,10 @@ function statusCommandHandler(req, res) {
   // render JSON for post, then post status to channel
   let jsonPostBody = JSON.parse(mustache.render(JSON.stringify(statusTemplate), statusView))
   slackClient.postTextToChannelEphemeralAsync(slackChannelId, jsonPostBody, userId)
+    .catch((error) => {
+      console.log(error)
+      throw(error)
+    })
   return
 }
 
@@ -95,11 +102,18 @@ function moveCommandHandler(req,res, moveIndex) {
     res.send('Challenge someone to play first!')
     return
   }
-  // if so, is it your turn?
+  // if so, are you a player?
   let game = workspace.activeChannels[slackChannelId].game
+  if (!((game.player1.userId === req.command.userId) || (game.player2.userId === req.command.userId))) {
+    // sorry, not your turn
+    res.send('Sorry, you\'re not playing this game.')
+    return
+  }
+  
+  // if so, is it your turn?
   if (!(game.currentPlayer.userId === req.command.userId)) {
     // sorry, not your turn
-    res.send('It\'s not your turn yet.')
+    res.send('Sorry, it\'s not your turn.')
     return
   }
   // if both so, can we place move on board?
@@ -108,35 +122,50 @@ function moveCommandHandler(req,res, moveIndex) {
     res.send('Invalid move, try again!')
     return
   }
+
+  // for everyone else, respond to slash command req
+  res.send()
+  
+  // ok, great move, let's increment turns counter
+  // and update who is current player and who is waiting player
+  let turn = game.toggleCurrentPlayer()
+  
   // check win status
-  if(game.didThisPlayerWin(game.currentPlayer)) {
+  if(game.didThisPlayerWin(game.waitingPlayer)) {
     // we have a winner!
-    this.gameOver = true
-    this.winner = game.currentPlayer
-    res.send('you won!:' + game.currentPlayer.squaresTotal)
-  } else {
-    // respond to slash command req
-    res.send()
+    game.gameOver = true
+    game.winner = game.waitingPlayer
   }
 
-  // if game is over, these won't matter
+
+  // if game is not over
   if (!this.gameOver) {
     // if no winner yet...
 
-    // ok, nice move, increment turns counter
-    let turn = game.toggleCurrentPlayer()
-
     // check if this is a draw
-    if (turn > 9) { // is this off by 1?
+    if (turn > 8) {
       // board is full, it's a draw!
       game.gameOver = true
+      game.draw = true
     }
   }
   
-
   // render JSON for post, then post status to channel
-  let jsonPostBody = JSON.parse(mustache.render(JSON.stringify(statusTemplate), statusView))
-  slackClient.postTextToChannelPublicAsync(slackChannelId, jsonPostBody)
+  let jsonPostBody = JSON.parse(mustache.render(JSON.stringify(moveTemplate), statusView))
+  slackClient.postTextToChannelPublicAsync(slackChannelId, jsonPostBody).then((response) => {
+    
+    console.log('game.waitingPlayer', game.waitingPlayer)
+    console.log('game.currentPlayer', game.currentPlayer)
+    if (this.gameOver) {
+      // and delete the channel, that's a wrap
+      console.log('removing from activeChannels')
+      workspace.activeChannelRemove(slackChannelId)
+    }
+  })
+  .catch((response) => {
+    console.log(error)
+  })
+
 }
 
 function helpCommandHandler(req, res) {
@@ -151,6 +180,10 @@ function helpCommandHandler(req, res) {
   // render JSON for post, then post status to channel
   let jsonPostBody = JSON.parse(mustache.render(JSON.stringify(helpTemplate), statusView))
   slackClient.postTextToChannelEphemeralAsync(slackChannelId, jsonPostBody, userId)
+    .catch((error) => {
+      console.log(error)
+      throw(error)
+    })
   return  
 }
 
@@ -178,13 +211,26 @@ function quitCommandHandler(req, res) {
       // render JSON for post, then post status to channel
       let jsonPostBody = JSON.parse(mustache.render(JSON.stringify(quitTemplate), statusView))
       slackClient.postTextToChannelPublicAsync(slackChannelId, jsonPostBody, userId)
-      return  
+        .then((response) => {
+          // and delete the channel, that's a wrap
+          workspace.activeChannelRemove(slackChannelId)
+          return  
+        })
+        .catch((response) => {
+          throw(error)
+          console.log(error)
+        })
+
     }
   }
   // private
   // render JSON for post, then post status to channel
   let jsonPostBody = JSON.parse(mustache.render(JSON.stringify(quitTemplate), statusView))
   slackClient.postTextToChannelEphemeralAsync(slackChannelId, jsonPostBody, userId)
+    .catch((response) => {
+      console.log(error)
+      throw(error)
+    })
   return
 }
 
@@ -196,8 +242,8 @@ function fetchSlackChannelAsync(slackChannelId) {
       return channelResponse 
     })
     .catch((error) => {
-      res.send(error)
-      return new Error('API call failed.')
+      res.send()
+      console.log(error)
     })
 }
 
@@ -210,7 +256,7 @@ function isUserInChannelAsync(slackChannelId, slackUserId) {
       return matchingId ? true : false
     })
     .catch(error => {
-
+      throw(error)
     })
 }
 
@@ -229,6 +275,9 @@ function doesUserHaveChannelMembershipAsync(slackUserId, slackChannelId) {
       })
       // return a boolean
       return matchingId ? true : false
+    })
+    .catch((error) => {
+      throw(error)
     })
 }
 

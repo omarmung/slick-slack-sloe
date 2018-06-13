@@ -3,14 +3,16 @@ const Player = require('./player')
 const constants = require('./constants')
 class Game {
   constructor(player1UserId, player1Symbol, player2Symbol, player2UserId, player1UserName, player2UserName) {
-    this.gameBoard = new Board();
-    this.player1 = new Player(player1Symbol, player1UserId, player1UserName);
-    this.player2 = new Player(player2Symbol, player2UserId, player2UserName); 
-    this.currentPlayer = this.player1;
-    this.gameAccepted = false;
-    this.winner = null;
-    this.gameOver = false;
-    this.turn = 1;
+    this.gameBoard = new Board()
+    this.player1 = new Player(player1Symbol, player1UserId, player1UserName)
+    this.player2 = new Player(player2Symbol, player2UserId, player2UserName) 
+    this.currentPlayer = this.player1
+    this.waitingPlayer = this.player2
+    this.gameAccepted = false
+    this.winner = null
+    this.gameOver = null
+    this.draw = null
+    this.turn = 0
   }
   didThisPlayerWin(player) {
     // is a win value represented, bit-wise, in this total?
@@ -30,6 +32,7 @@ class Game {
   toggleCurrentPlayer() {
     // set currentPlayer to the next player
     this.currentPlayer.userId === this.player1.userId ? this.currentPlayer = this.player2 : this.currentPlayer = this.player1
+    this.waitingPlayer.userId === this.player2.userId ? this.waitingPlayer = this.player1 : this.waitingPlayer = this.player2
     // increment round
     this.turn++
     return this.turn
