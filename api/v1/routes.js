@@ -6,7 +6,8 @@ const slashCommandValidationOptions = require('../../libs/route_validation_optio
 const channelGamesController = require('../../controllers/channelGamesController')
 const commandParserMiddleware = require('../../middleware/command_parser_middleware')
 /**
- * @api {get} /api/v1 App Heartbeat
+ * @api {get} / App Heartbeat
+ * @apiVersion 1.0.0
  * @apiName Heartbeat
  * @apiGroup General
  *
@@ -21,9 +22,12 @@ const commandParserMiddleware = require('../../middleware/command_parser_middlew
 router.get('/', (req, res) => { res.json({"status": "ok"}) })
 
 /**
- * @api {post} /api/v1/game Game Command Parser
- * @apiName Gam
+ * @api {post} /game Game Command Parser
+ * @apiVersion 1.0.0
+ * @apiName Game
  * @apiGroup Game
+ ** @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
  *
  **/
 router.post(
