@@ -72,7 +72,6 @@ describe('Workspace', function() {
      aWorkspace = new Workspace()
      aWorkspace.createNewChannel(slackChannelId, channelName, player1UserId, player1Symbol, player2Symbol)
      let myGame1 = aWorkspace.getActiveChannelGameById(slackChannelId).game
-     // console.log("MYGAME1: ", myGame1)
    })
    
    after('Destroy channel/game instance', function() {
@@ -82,7 +81,6 @@ describe('Workspace', function() {
    
    describe('Creating a channel', function() {
      it('should have a game', function() {
-       // console.log('WHATFKKJDF', myChan1)
        assert.property(aWorkspace.activeChannels, slackChannelId)
      })
    }) 

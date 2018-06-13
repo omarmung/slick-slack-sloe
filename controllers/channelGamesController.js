@@ -17,7 +17,6 @@ function playCommandHandler(req, res) {
   const player1UserId = req.command.userId
   const opponentUserName = req.command.opponentUserName
   const opponentUserId = req.command.opponentUserId
-  console.log('opponentUserName:', opponentUserName)
   workspace = req.app.locals.workspace
   const player1Symbol = 'X'
   const player2Symbol = 'O'
@@ -56,7 +55,7 @@ function playCommandHandler(req, res) {
             let jsonPostBody = JSON.parse(mustache.render(JSON.stringify(statusTemplate), statusView))
             slackClient.postTextToChannelPublicAsync(slackChannelId, jsonPostBody)
               .catch((error) => {
-                console.log(error)
+                console.error(error)
                 throw(error)
               })
 
@@ -68,7 +67,7 @@ function playCommandHandler(req, res) {
         return
       })
       .catch( error => {
-        console.log('Error:', error)
+        console.error(error)
         // return res.json('testings')
       })
   }
@@ -96,7 +95,7 @@ function statusCommandHandler(req, res) {
   let jsonPostBody = JSON.parse(mustache.render(JSON.stringify(statusTemplate), statusView))
   slackClient.postTextToChannelEphemeralAsync(slackChannelId, jsonPostBody, userId)
     .catch((error) => {
-      console.log(error)
+      console.error(error)
       throw(error)
     })
   return
@@ -168,12 +167,11 @@ function moveCommandHandler(req,res, moveIndex) {
     // remove old games
     if (game.gameOver) {
       // and delete the channel, that's a wrap
-      console.log('removing from activeChannels')
       workspace.activeChannelRemove(slackChannelId)
     }
   })
   .catch((response) => {
-    console.log(error)
+    console.error(error)
   })
 
 }
@@ -191,7 +189,7 @@ function helpCommandHandler(req, res) {
   let jsonPostBody = JSON.parse(mustache.render(JSON.stringify(helpTemplate), statusView))
   slackClient.postTextToChannelEphemeralAsync(slackChannelId, jsonPostBody, userId)
     .catch((error) => {
-      console.log(error)
+      console.error(error)
       throw(error)
     })
   return  
@@ -228,7 +226,7 @@ function quitCommandHandler(req, res) {
         })
         .catch((response) => {
           throw(error)
-          console.log(error)
+          console.error(error)
         })
 
     }
@@ -238,7 +236,7 @@ function quitCommandHandler(req, res) {
   let jsonPostBody = JSON.parse(mustache.render(JSON.stringify(quitTemplate), statusView))
   slackClient.postTextToChannelEphemeralAsync(slackChannelId, jsonPostBody, userId)
     .catch((response) => {
-      console.log(error)
+      console.error(error)
       throw(error)
     })
   return
@@ -253,7 +251,7 @@ function fetchSlackChannelAsync(slackChannelId) {
     })
     .catch((error) => {
       res.send()
-      console.log(error)
+      console.error(error)
     })
 }
 
