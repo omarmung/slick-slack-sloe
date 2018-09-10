@@ -7,7 +7,7 @@ A note that this was created as a workspace app using the 'Create a developer pr
 <br /><br />
 
 ## API Documentation
-If the app is running, check out the [API documentation page](https://slick-slack-sloe-app.herokuapp.com/docs "API Documentation") that the app generates this each time it starts).
+If the app is running, check out the [API documentation page](localhost:8080/docs "API Documentation") that the app generates each time it starts).
 <br /><br />
 
 
